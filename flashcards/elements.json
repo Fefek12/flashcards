@@ -1,0 +1,9 @@
+{
+    "0": {"front": "C", "back": "Carbon"},
+    "1": {"front": "O", "back": "Oxygen"},
+    "2": {"front": "Cu", "back": "Copper"},
+    "3": {"front": "Al", "back": "Aluminium"},
+    "4": {"front": "N", "back": "Nitrogen"},
+    "5": {"front": "H", "back": "Hydrogen"},
+    "6": {"front": "K", "back": "Potassium"}
+}
