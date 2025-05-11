@@ -1,2 +1,5 @@
 .venv
-src/_pycache_
+src\_pycache_
+build
+dist
+main.spec
