@@ -1,5 +1,5 @@
 .venv
-src\_pycache_
+src/__pycache__
 build
 dist
 main.spec
