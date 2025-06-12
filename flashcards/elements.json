@@ -1,9 +1,30 @@
 {
-    "0": {"front": "C", "back": "Carbon"},
-    "1": {"front": "O", "back": "Oxygen"},
-    "2": {"front": "Cu", "back": "Copper"},
-    "3": {"front": "Al", "back": "Aluminium"},
-    "4": {"front": "N", "back": "Nitrogen"},
-    "5": {"front": "H", "back": "Hydrogen"},
-    "6": {"front": "K", "back": "Potassium"}
+  "0": {
+    "front": "Carbon",
+    "back": "C"
+  },
+  "1": {
+    "front": "Oxygen",
+    "back": "O"
+  },
+  "2": {
+    "front": "Copper",
+    "back": "Cu"
+  },
+  "3": {
+    "front": "Aluminium",
+    "back": "Al"
+  },
+  "4": {
+    "front": "Nitrogen",
+    "back": "N"
+  },
+  "5": {
+    "front": "Hydrogen",
+    "back": "H"
+  },
+  "6": {
+    "front": "Potassium",
+    "back": "K"
+  }
 }

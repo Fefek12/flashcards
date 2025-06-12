@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 
-from flashcards import flashcards
+from flashcards import flashcards, swap
 from colors import colors
 
 class Main():
@@ -17,6 +17,13 @@ class Main():
         self.front_font_color = "black"
         self.back_font_color = "black"
     def layout(self):
+        def next():
+            self.move_logic("next")
+        def previous():
+            self.move_logic("previous")
+        def invert():
+            swap(self.file_path)
+
         self.flashcard_frame = tk.Frame(self.root, width=300, height=200, bg=self.front_color, borderwidth=1, relief="solid")
         self.flashcard_frame.pack(pady=10)
         self.flashcard_frame.pack_propagate(False)
@@ -29,18 +36,20 @@ class Main():
         options_frame = tk.Frame(self.root)
         options_frame.pack(pady=10)
 
-        tk.Button(options_frame, text="Flip", command=self.flip_logic).grid(row=0, column=0)
-        tk.Button(options_frame, text="Next", command=self.next_logic).grid(row=0, column=1, padx=5)
+        tk.Button(options_frame, text="flip", command=self.flip_logic).grid(row=0, column=0)
+        tk.Button(options_frame, text="next", command=next).grid(row=0, column=1, padx=5)
+        tk.Button(options_frame, text="previous", command=previous).grid(row=0, column=2)
 
         menu_bar = tk.Menu(self.root)
-        file_menu = tk.Menu(menu_bar, tearoff=0)
-        file_menu.add_command(label="Load", command=self.load_flashcards)
+        flashcard_menu = tk.Menu(menu_bar, tearoff=0)
+        flashcard_menu.add_command(label="load", command=self.load_flashcards)
+        flashcard_menu.add_command(label="invert", command=invert)
 
         program_menu = tk.Menu(menu_bar, tearoff=0)
-        program_menu.add_command(label="Colors", command=self.change_colors)
+        program_menu.add_command(label="colors", command=self.change_colors)
 
-        menu_bar.add_cascade(label="File", menu=file_menu)
-        menu_bar.add_cascade(label="Program", menu=program_menu)
+        menu_bar.add_cascade(label="flashcard", menu=flashcard_menu)
+        menu_bar.add_cascade(label="program", menu=program_menu)
         self.root.config(menu=menu_bar)
     def start(self):
         self.root = tk.Tk()
@@ -53,17 +62,17 @@ class Main():
         self.current_index = 0
         self.content = {}
 
-        self.current_front.set("Load a file first")
-        self.current_back.set("Load a file first")
+        self.current_front.set("load a file first")
+        self.current_back.set("load a file first")
 
         self.layout()
         self.root.mainloop()
     def load_flashcards(self):
-        file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
-        if not file_path:
-             return
+        self.file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+        if not self.file_path:
+            return
 
-        self.content = flashcards(file_path)
+        self.content = flashcards(self.file_path)
         self.current_index = 0
         self.current_front.set(self.content["0"]["front"])
         self.current_back.set(self.content["0"]["back"])
@@ -77,11 +86,13 @@ class Main():
             self.front_label.pack_forget()
             self.back_label.pack(pady=75)
         self.flipped = not self.flipped
-    def next_logic(self):
+    def move_logic(self, direction):
         keys = list(self.content.keys())
 
-        if self.current_index + 1 < len(keys):
+        if self.current_index + 1 < len(keys) and direction == "next":
             self.current_index += 1
+        elif self.current_index - 1 >= 0 and direction == "previous":
+            self.current_index -= 1
         else:
             self.current_index = 0
 
@@ -109,7 +120,6 @@ class Main():
         
         self.front_label.config(bg=self.front_color, fg=self.front_font_color)
         self.back_label.config(bg=self.back_color, fg=self.back_font_color)
-
 if __name__ == "__main__":
     app = Main()
     app.start()
