@@ -8,7 +8,7 @@ from colors import colors
 class Main():
     def __init__(self):
         self.rezolution = "500x300"
-        self.title = "Flashcards by Fefek"
+        self.title = "flashcards"
 
         self.flipped = False
 
