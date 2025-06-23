@@ -1,5 +1,3 @@
-from platform import release
-from pydoc import help
 import tkinter as tk
 from tkinter import filedialog
 import webbrowser
