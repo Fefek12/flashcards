@@ -1,14 +1,18 @@
+from platform import release
+from pydoc import help
 import tkinter as tk
 from tkinter import filedialog
-from tkinter import messagebox
+import webbrowser
 
 from flashcards import flashcards, swap
 from colors import colors
 
 class Main():
     def __init__(self):
+        version = "1.2.0"
+
         self.rezolution = "500x300"
-        self.title = "flashcards"
+        self.title = "flashcards " + version
 
         self.flipped = False
 
@@ -16,6 +20,9 @@ class Main():
         self.back_color = "lightblue"
         self.front_font_color = "black"
         self.back_font_color = "black"
+
+        self.github_url = "https://github.com/Fefek12/flashcards"
+        self.releases_url = "https://github.com/Fefek12/flashcards/releases"
     def layout(self):
         def next():
             self.move_logic("next")
@@ -23,6 +30,11 @@ class Main():
             self.move_logic("previous")
         def invert():
             swap(self.file_path)
+
+        def github():
+            self.help(self.github_url)
+        def release_notes():
+            self.help(self.releases_url)
 
         self.flashcard_frame = tk.Frame(self.root, width=300, height=200, bg=self.front_color, borderwidth=1, relief="solid")
         self.flashcard_frame.pack(pady=10)
@@ -48,8 +60,13 @@ class Main():
         program_menu = tk.Menu(menu_bar, tearoff=0)
         program_menu.add_command(label="colors", command=self.change_colors)
 
+        help_menu = tk.Menu(menu_bar, tearoff=0)
+        help_menu.add_command(label="github", command=github)
+        help_menu.add_command(label="view releases", command=release_notes)
+
         menu_bar.add_cascade(label="flashcard", menu=flashcard_menu)
         menu_bar.add_cascade(label="program", menu=program_menu)
+        menu_bar.add_cascade(label="help", menu=help_menu)
         self.root.config(menu=menu_bar)
     def start(self):
         self.root = tk.Tk()
@@ -117,9 +134,12 @@ class Main():
             self.flashcard_frame.config(bg=self.back_color)
         else:
             self.flashcard_frame.config(bg=self.front_color)
-        
+
         self.front_label.config(bg=self.front_color, fg=self.front_font_color)
         self.back_label.config(bg=self.back_color, fg=self.back_font_color)
+    def help(self, url):
+        webbrowser.open_new(url)
+
 if __name__ == "__main__":
     app = Main()
     app.start()
