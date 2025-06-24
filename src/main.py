@@ -2,8 +2,8 @@ import tkinter as tk
 from tkinter import filedialog
 import webbrowser
 
-from flashcards import flashcards, swap
-from colors import colors
+from flashcards import Flashcard
+from colors import Colors
 
 class Main():
     def __init__(self):
@@ -13,6 +13,9 @@ class Main():
         self.title = "flashcards " + version
 
         self.flipped = False
+        self.current_index = 0
+        self.content = {}
+        self.flashcards_file_path = None
 
         self.front_color = "yellow"
         self.back_color = "lightblue"
@@ -28,7 +31,9 @@ class Main():
         def previous():
             self.move_logic("previous")
         def invert():
-            swap(self.file_path)
+            if self.flashcards_file_path:
+                flashcard = Flashcard(self.flashcards_file_path)
+                flashcard.swap()
 
         def github():
             self.help(self.github_url)
@@ -78,8 +83,6 @@ class Main():
 
         self.current_front = tk.StringVar()
         self.current_back = tk.StringVar()
-        self.current_index = 0
-        self.content = {}
 
         self.current_front.set("load a file first")
         self.current_back.set("load a file first")
@@ -87,11 +90,14 @@ class Main():
         self.layout()
         self.root.mainloop()
     def load_flashcards(self):
-        self.file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
-        if not self.file_path:
+        try:
+            self.flashcards_file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+        except Exception:
             return
 
-        self.content = flashcards(self.file_path)
+        flashcard = Flashcard(self.flashcards_file_path)
+
+        self.content = flashcard.load()
         self.current_index = 0
         self.current_front.set(self.content["0"]["front"])
         self.current_back.set(self.content["0"]["back"])
@@ -123,9 +129,14 @@ class Main():
         self.flashcard_frame.config(bg=self.front_color)
         self.flipped = False
     def change_colors(self):
-        file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+        try:
+            file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+        except Exception:
+            return
 
-        loaded_colors = colors(file_path)
+        colors = Colors(file_path)
+
+        loaded_colors = colors.load()
 
         self.front_color = loaded_colors["front"]
         self.back_color = loaded_colors["back"]
