@@ -21,6 +21,7 @@ class Main():
 
         self.github_url = "https://github.com/Fefek12/flashcards"
         self.releases_url = "https://github.com/Fefek12/flashcards/releases"
+        self.issues_url = "https://github.com/Fefek12/flashcards/issues"
     def layout(self):
         def next():
             self.move_logic("next")
@@ -33,6 +34,8 @@ class Main():
             self.help(self.github_url)
         def release_notes():
             self.help(self.releases_url)
+        def issues():
+            self.help(self.issues_url)
 
         self.flashcard_frame = tk.Frame(self.root, width=300, height=200, bg=self.front_color, borderwidth=1, relief="solid")
         self.flashcard_frame.pack(pady=10)
@@ -61,6 +64,7 @@ class Main():
         help_menu = tk.Menu(menu_bar, tearoff=0)
         help_menu.add_command(label="github", command=github)
         help_menu.add_command(label="view releases", command=release_notes)
+        help_menu.add_command(label="issues", command=issues)
 
         menu_bar.add_cascade(label="flashcard", menu=flashcard_menu)
         menu_bar.add_cascade(label="program", menu=program_menu)
