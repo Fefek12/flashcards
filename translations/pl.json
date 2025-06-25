@@ -3,5 +3,5 @@
   "flashcards": ["fiszki", "załaduj", "odwróć"],
   "program": ["program", "kolory", "tłumaczenia"],
   "help": ["pomoc", "github", "nowe wersje", "zgłoś błąd"],
-  "options": ["odwróć", "następna", "poprzednie"]
+  "options": ["odwróć", "następna", "poprzednia"]
 }
