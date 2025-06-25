@@ -1,13 +1,16 @@
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import messagebox
 import webbrowser
 
 from flashcards import Flashcard
 from colors import Colors
+from translations import Translations
+from config import Config
 
 class Main():
     def __init__(self):
-        version = "1.2.0"
+        version = "1.3.0"
 
         self.rezolution = "500x300"
         self.title = "flashcards " + version
@@ -15,7 +18,8 @@ class Main():
         self.flipped = False
         self.current_index = 0
         self.content = {}
-        self.flashcards_file_path = None
+        self.loaded_translation = {}
+        self.config = None
 
         self.front_color = "yellow"
         self.back_color = "lightblue"
@@ -31,8 +35,8 @@ class Main():
         def previous():
             self.move_logic("previous")
         def invert():
-            if self.flashcards_file_path:
-                flashcard = Flashcard(self.flashcards_file_path)
+            if self.config["flashcard"]:
+                flashcard = Flashcard(self.config["flashcard"])
                 flashcard.swap()
 
         def github():
@@ -54,26 +58,27 @@ class Main():
         options_frame = tk.Frame(self.root)
         options_frame.pack(pady=10)
 
-        tk.Button(options_frame, text="flip", command=self.flip_logic).grid(row=0, column=0)
-        tk.Button(options_frame, text="next", command=next).grid(row=0, column=1, padx=5)
-        tk.Button(options_frame, text="previous", command=previous).grid(row=0, column=2)
+        tk.Button(options_frame, text=self.loaded_translation["options"][0], command=self.flip_logic).grid(row=0, column=0)
+        tk.Button(options_frame, text=self.loaded_translation["options"][1], command=next).grid(row=0, column=1, padx=5)
+        tk.Button(options_frame, text=self.loaded_translation["options"][2], command=previous).grid(row=0, column=2)
 
         menu_bar = tk.Menu(self.root)
         flashcard_menu = tk.Menu(menu_bar, tearoff=0)
-        flashcard_menu.add_command(label="load", command=self.load_flashcards)
-        flashcard_menu.add_command(label="invert", command=invert)
+        flashcard_menu.add_command(label=self.loaded_translation["flashcards"][1], command=self.load_flashcards)
+        flashcard_menu.add_command(label=self.loaded_translation["flashcards"][2], command=invert)
 
         program_menu = tk.Menu(menu_bar, tearoff=0)
-        program_menu.add_command(label="colors", command=self.change_colors)
+        program_menu.add_command(label=self.loaded_translation["program"][1], command=self.change_colors)
+        program_menu.add_command(label=self.loaded_translation["program"][2], command=self.translate)
 
         help_menu = tk.Menu(menu_bar, tearoff=0)
-        help_menu.add_command(label="github", command=github)
-        help_menu.add_command(label="view releases", command=release_notes)
-        help_menu.add_command(label="issues", command=issues)
+        help_menu.add_command(label=self.loaded_translation["help"][1], command=github)
+        help_menu.add_command(label=self.loaded_translation["help"][2], command=release_notes)
+        help_menu.add_command(label=self.loaded_translation["help"][3], command=issues)
 
-        menu_bar.add_cascade(label="flashcard", menu=flashcard_menu)
-        menu_bar.add_cascade(label="program", menu=program_menu)
-        menu_bar.add_cascade(label="help", menu=help_menu)
+        menu_bar.add_cascade(label=self.loaded_translation["flashcards"][0], menu=flashcard_menu)
+        menu_bar.add_cascade(label=self.loaded_translation["program"][0], menu=program_menu)
+        menu_bar.add_cascade(label=self.loaded_translation["help"][0], menu=help_menu)
         self.root.config(menu=menu_bar)
     def start(self):
         self.root = tk.Tk()
@@ -84,18 +89,31 @@ class Main():
         self.current_front = tk.StringVar()
         self.current_back = tk.StringVar()
 
-        self.current_front.set("load a file first")
-        self.current_back.set("load a file first")
+        config = Config(None, None, None)
+        self.config = config.load()
+        translations = Translations(self.config["translation"])
+        self.loaded_translation = translations.load()
+
+        self.current_front.set(self.loaded_translation["disclaimer"])
+        self.current_back.set(self.loaded_translation["disclaimer"])
 
         self.layout()
-        self.root.mainloop()
-    def load_flashcards(self):
-        try:
-            self.flashcards_file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
-        except Exception:
-            return
+        self.change_colors(True)
+        self.load_flashcards(True)
 
-        flashcard = Flashcard(self.flashcards_file_path)
+        self.root.protocol("WM_DELETE_WINDOW", self.closing)
+        self.root.mainloop()
+    def load_flashcards(self, initial=False):
+        if not initial:
+            try:
+                self.config["flashcard"] = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+            except Exception:
+                return
+        else:
+            if not self.config or not self.config["flashcard"]:
+                return
+
+        flashcard = Flashcard(self.config["flashcard"])
 
         self.content = flashcard.load()
         self.current_index = 0
@@ -128,13 +146,17 @@ class Main():
         self.back_label.pack_forget()
         self.flashcard_frame.config(bg=self.front_color)
         self.flipped = False
-    def change_colors(self):
-        try:
-            file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
-        except Exception:
-            return
+    def change_colors(self, initial=False):
+        if not initial:
+            try:
+                self.config["color"] = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+            except Exception:
+                return
+        else:
+            if not self.config or not self.config["color"]:
+                return
 
-        colors = Colors(file_path)
+        colors = Colors(self.config["color"])
 
         loaded_colors = colors.load()
 
@@ -152,6 +174,22 @@ class Main():
         self.back_label.config(bg=self.back_color, fg=self.back_font_color)
     def help(self, url):
         webbrowser.open_new(url)
+    def translate(self, initial=False):
+        if not initial:
+            try:
+                self.config["translation"] = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+            except Exception:
+                return
+
+        translations = Translations(self.config["translation"])
+        self.loaded_translation = translations.load()
+
+        if not initial:
+            messagebox.showinfo("translations", "restart app to see changes")
+    def closing(self):
+        config = Config(self.config["flashcard"], self.config["color"], self.config["translation"])
+        config.save()
+        self.root.destroy()
 
 if __name__ == "__main__":
     app = Main()

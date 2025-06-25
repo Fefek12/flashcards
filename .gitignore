@@ -4,3 +4,6 @@ build
 dist
 main.spec
 .ropeproject
+flashcards_config.json
+src/__pycache__
+src\__pycache__

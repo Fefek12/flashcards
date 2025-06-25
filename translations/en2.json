@@ -1,0 +1,7 @@
+{
+  "disclaimer": "Load file first",
+  "flashcards": ["Flashcards", "Load", "Invert"],
+  "program": ["Program", "Colors", "Translations"],
+  "help": ["Help", "Github", "New releases", "Issues"],
+  "options": ["Flip", "Next", "Previous"]
+}
