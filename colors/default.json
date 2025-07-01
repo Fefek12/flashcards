@@ -1,6 +1,6 @@
 {
-    "front": "yellow",
-    "back": "lightblue",
-    "front-font": "black",
-    "back-font": "black"
+  "front": "yellow",
+  "back": "lightblue",
+  "font-front": "black",
+  "font-back": "black"
 }
