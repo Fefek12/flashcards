@@ -1,11 +1,12 @@
 import json
 
 class Config():
-    def __init__(self, flashcard, color, translation):
+    def __init__(self, flashcard, color, translation, keybinds):
         self.config = {
             "flashcard": flashcard,
             "color": color,
-            "translation": translation
+            "translation": translation,
+            "keybinds": keybinds
         }
         self.config_file_name = "flashcards_config.json"
     def load(self):

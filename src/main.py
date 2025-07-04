@@ -89,7 +89,7 @@ class Main():
         self.current_front = tk.StringVar()
         self.current_back = tk.StringVar()
 
-        config = Config(None, None, None)
+        config = Config(None, None, None, ["<Right>", "<Left>", "<Up>"])
         self.config = config.load()
         translations = Translations(self.config["translation"])
         self.loaded_translation = translations.load()
@@ -100,6 +100,10 @@ class Main():
         self.layout()
         self.change_colors(True)
         self.load_flashcards(True)
+
+        self.root.bind(self.config["keybinds"][0], lambda event: self.move_logic("next"))
+        self.root.bind(self.config["keybinds"][1], lambda event: self.move_logic("previous"))
+        self.root.bind(self.config["keybinds"][2], lambda event: self.flip_logic())
 
         self.root.protocol("WM_DELETE_WINDOW", self.closing)
         self.root.mainloop()
@@ -187,7 +191,7 @@ class Main():
         if not initial:
             messagebox.showinfo("translations", "restart app to see changes")
     def closing(self):
-        config = Config(self.config["flashcard"], self.config["color"], self.config["translation"])
+        config = Config(self.config["flashcard"], self.config["color"], self.config["translation"], self.config["keybinds"])
         config.save()
         self.root.destroy()
 
